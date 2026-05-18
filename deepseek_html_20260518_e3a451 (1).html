@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>🔥 ACE NEXUS — 100 LEVEL 🔥</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+        body {
+            background: linear-gradient(135deg, #0a0f0a, #1a2a1a);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+        .game-container {
+            background: #0f2a0f;
+            border-radius: 50px;
+            padding: 15px;
+            max-width: 1300px;
+            width: 100%;
+            box-shadow: 0 20px 40px black;
+        }
+        h1 {
+            text-align: center;
+            color: #ff6600;
+            text-shadow: 3px 3px 0 #5a1a00;
+            font-size: 2rem;
+            letter-spacing: 3px;
+        }
+        .level-bar {
+            background: #1e3a1e;
+            border-radius: 40px;
+            padding: 10px 20px;
+            margin: 15px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .level-info {
+            background: #2d2d1c;
+            padding: 8px 20px;
+            border-radius: 40px;
+            color: #ffaa44;
+            font-weight: bold;
+        }
+        .level-progress {
+            flex: 1;
+            height: 12px;
+            background: #3a3a2a;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .level-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6600, #ffcc00);
+            width: 0%;
+            transition: width 0.3s;
+            border-radius: 20px;
+        }
+        .win-counter {
+            background: #2d2d1c;
+            padding: 8px 20px;
+            border-radius: 40px;
+            color: #ffaa44;
+            font-weight: bold;
+        }
+        .subtitle {
+            text-align: center;
+            color: #ffaa44;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        .players-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .player-card {
+            background: #2d552d;
+            border-radius: 30px;
+            padding: 12px;
+            width: 300px;
+            text-align: center;
+            box-shadow: inset 0 0 8px #5a9e5a, 0 5px 15px black;
+        }
+        .player-card.active {
+            background: #f5a623;
+            box-shadow: 0 0 0 4px gold;
+        }
+        .player-name {
+            font-weight: bold;
+            font-size: 1.3rem;
+            background: #1e3a1e;
+            display: inline-block;
+            padding: 5px 18px;
+            border-radius: 30px;
+            color: #ffdd99;
+        }
+        .card-area {
+            background: #1e3a1e;
+            border-radius: 20px;
+            min-height: 140px;
+            margin: 12px 0;
+            padding: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+        }
+        .card {
+            width: 70px;
+            height: 100px;
+            background: white;
+            border-radius: 10px;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            box-shadow: -2px 2px 6px black;
+            transition: 0.08s linear;
+            cursor: pointer;
+        }
+        .card:hover { transform: translateY(-6px); }
+        .red { background: #e34234; color: white; }
+        .green { background: #3cac3c; color: white; }
+        .blue { background: #3a6ea5; color: white; }
+        .yellow { background: #f4d03f; color: #222; }
+        .wild { background: linear-gradient(145deg, #2c2c2c, #111); color: gold; border: 1px solid gold; }
+        .hidden-card {
+            background: repeating-linear-gradient(45deg, #2b2b2b, #2b2b2b 12px, #4a4a4a 12px, #4a4a4a 24px);
+            border: 2px solid #ffb347;
+            color: #f5cb8b;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .center-area {
+            text-align: center;
+            margin: 15px 0;
+        }
+        .open-card-box {
+            background: #c9af7b;
+            display: inline-block;
+            padding: 15px;
+            border-radius: 35px;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        button {
+            background: #f5a623;
+            border: none;
+            padding: 10px 25px;
+            font-weight: bold;
+            font-size: 1rem;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.05s linear;
+        }
+        button:active { transform: scale(0.96); }
+        .message {
+            background: #000000aa;
+            border-radius: 40px;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+            color: #ffefb0;
+            margin-top: 15px;
+        }
+        @media (max-width: 700px) {
+            .card { width: 55px; height: 80px; font-size: 1.1rem; }
+            .player-card { width: 100%; }
+            .level-bar { flex-direction: column; }
+        }
+        .fire-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #ff4400, #990000);
+            animation: fire 1s forwards;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        @keyframes fire {
+            0% { opacity: 0; }
+            20% { opacity: 0.9; }
+            100% { opacity: 0; transform: scale(1.2); }
+        }
+        .burn-card {
+            animation: burnAnim 0.5s forwards;
+        }
+        @keyframes burnAnim {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; filter: blur(5px); background: #ff4400; }
+        }
+        .stack-badge {
+            background: #ff3300;
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+        .color-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+        .color-modal-content {
+            background: #2d2d1c;
+            border-radius: 50px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 0 30px gold;
+            border: 2px solid #ffaa33;
+        }
+        .color-modal-content h3 {
+            color: #ffaa33;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        .color-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .color-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid white;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .color-btn:hover { transform: scale(1.1); }
+        .color-red { background: #e34234; }
+        .color-green { background: #3cac3c; }
+        .color-blue { background: #3a6ea5; }
+        .color-yellow { background: #f4d03f; }
+        .level-up {
+            animation: levelUp 0.5s ease;
+        }
+        @keyframes levelUp {
+            0% { transform: scale(1); background: #ffaa33; }
+            50% { transform: scale(1.05); background: #ffcc66; }
+            100% { transform: scale(1); background: #2d552d; }
+        }
+    </style>
+</head>
+<body>
+<div class="game-container">
+    <h1>🔥 ACE NEXUS — 100 LEVEL 🔥</h1>
+    
+    <div class="level-bar">
+        <div class="level-info">⭐ LEVEL: <span id="levelNum">1</span> / 100</div>
+        <div class="level-progress">
+            <div class="level-progress-fill" id="levelProgress"></div>
+        </div>
+        <div class="win-counter">🏆 G'alabalar: <span id="winCount">0</span></div>
+    </div>
+    <div class="subtitle">⚡ Har bir levelda bot kuchayadi! ⚡</div>
+    
+    <div class="players-row" id="playersRow"></div>
+    
+    <div class="center-area">
+        <div class="open-card-box">
+            <div style="font-weight:bold;">🃏 OCHIQ KARTA</div>
+            <div id="openCardSlot"></div>
+            <div id="stackInfo" style="margin-top:8px; font-size:1.3rem;"></div>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <button id="drawBtn">📥 Karta olish</button>
+        <button id="resetBtn">🔄 Yangi o‘yin</button>
+    </div>
+    <div class="message" id="gameMsg">🎮 O‘yin boshlandi! Level 1. Siz boshlaysiz</div>
+</div>
+
+<script>
+    // -------------------- ACE NEXUS — 100 LEVEL SYSTEM --------------------
+    // Level 1 dan 100 gacha. Har bir levelda:
+    // - Bot aqlli: yuqori levelda strategik o'ynaydi
+    // - Bot tezroq qaror qiladi
+    // - Bot kamroq xato qiladi
+    
+    const COLORS = ["red", "green", "blue", "yellow"];
+    const NUMBER_VALS = ["0","1","2","3","4","5","6","7","8","9"];
+    const ACTION_VALS = ["+2","skip","reverse"];
+    
+    // LEVEL SISTEMASI
+    let currentLevel = 1;
+    let winCount = 0;
+    
+    // Levelga qarab botning qiyinlik darajasi (1-100)
+    function getBotDifficulty() {
+        // 1-100 oralig'ida, qancha level baland bo'lsa, bot shuncha aqlli
+        return {
+            // Botning stack kartalarini afzal ko'rish foizi (level baland -> ko'proq stack ishlatadi)
+            stackPriority: Math.min(95, 50 + (currentLevel * 0.45)),
+            // Botning wild rangni to'g'ri tanlash ehtimoli (level baland -> sizga qarshi rang)
+            smartWildPick: currentLevel >= 50,
+            // Botning skip/reverse ni strategik ishlatishi
+            strategicActions: currentLevel >= 30,
+            // Botning karta olish chegarasi (qancha karta qolganda karta olishni afzal ko'radi)
+            drawThreshold: Math.max(2, 7 - Math.floor(currentLevel / 20)),
+            // Botning javob tezligi (ms) - level baland -> tezroq
+            responseTime: Math.max(200, 800 - (currentLevel * 6))
+        };
+    }
+    
+    // Levelni yangilash
+    function levelUp() {
+        currentLevel++;
+        if (currentLevel > 100) currentLevel = 100;
+        updateLevelUI();
+        document.getElementById("gameMsg").innerHTML = `🎉 LEVEL UP! Level ${currentLevel} ga chiqdingiz! Bot kuchaydi! 🎉`;
+        
+        // Animatsiya
+        const levelDiv = document.querySelector(".level-info");
+        levelDiv.classList.add("level-up");
+        setTimeout(() => levelDiv.classList.remove("level-up"), 500);
+    }
+    
+    function updateLevelUI() {
+        document.getElementById("levelNum").innerText = currentLevel;
+        document.getElementById("winCount").innerText = winCount;
+        const progress = (currentLevel / 100) * 100;
+        document.getElementById("levelProgress").style.width = `${progress}%`;
+    }
+    
+    function resetLevel() {
+        currentLevel = 1;
+        winCount = 0;
+        updateLevelUI();
+        startNewGame();
+    }
+    
+    // O'YIN QISMI
+    let player = { name: "🧝 SIZ", cards: [], uno: false };
+    let bot = { name: "🤖 ACE BOT", cards: [], uno: false };
+    
+    let currentTurn = "player";
+    let gameDeck = [];
+    let openCard = null;
+    let gameActive = true;
+    let drawStack = 0;
+    let skipNext = false;
+    let waitingForWildPick = false;
+    let botTimeout = null;
+    
+    function createDeck() {
+        let deck = [];
+        for (let color of COLORS) {
+            for (let num of NUMBER_VALS) {
+                if (num === "0") deck.push({ color, value: num, type: "number" });
+                else {
+                    deck.push({ color, value: num, type: "number" });
+                    deck.push({ color, value: num, type: "number" });
+                }
+            }
+            for (let act of ACTION_VALS) {
+                deck.push({ color, value: act, type: "action" });
+                deck.push({ color, value: act, type: "action" });
+            }
+        }
+        for (let i=0;i<4;i++) deck.push({ color: "wild", value: "wild", type: "wild" });
+        for (let i=0;i<4;i++) deck.push({ color: "wild", value: "wild+4", type: "wild" });
+        return shuffle(deck);
+    }
+    
+    function shuffle(deck) {
+        for (let i=deck.length-1;i>0;i--) {
+            let j = Math.floor(Math.random()*(i+1));
+            [deck[i], deck[j]] = [deck[j], deck[i]];
+        }
+        return deck;
+    }
+    
+    function startNewGame() {
+        if (botTimeout) clearTimeout(botTimeout);
+        gameDeck = createDeck();
+        player.cards = [];
+        bot.cards = [];
+        for (let i=0;i<7;i++) {
+            player.cards.push(gameDeck.pop());
+            bot.cards.push(gameDeck.pop());
+        }
+        openCard = gameDeck.pop();
+        while (openCard.type === "wild") openCard = gameDeck.pop();
+        currentTurn = "player";
+        gameActive = true;
+        drawStack = 0;
+        skipNext = false;
+        waitingForWildPick = false;
+        player.uno = false;
+        bot.uno = false;
+        document.getElementById("gameMsg").innerHTML = `🎮 Level ${currentLevel}! Siz boshlaysiz. Bot qiyinligi: ${Math.floor(getBotDifficulty().stackPriority)}%`;
+        renderUI();
+    }
+    
+    function isNormalMatch(card, topCard) {
+        if (card.type === "wild") return true;
+        if (topCard.color === "wild") return card.color === topCard.color;
+        return (card.color === topCard.color || card.value === topCard.value);
+    }
+    
+    function isStackCard(card) {
+        return (card.value === "+2" || card.value === "wild+4");
+    }
+    
+    function canPlayCardWithStack(card, topCard) {
+        if (isStackCard(card)) return true;
+        return isNormalMatch(card, topCard);
+    }
+    
+    function canPlayCard(card, topCard, currentStack) {
+        if (currentStack > 0) {
+            return canPlayCardWithStack(card, topCard);
+        }
+        return isNormalMatch(card, topCard);
+    }
+    
+    // AQLLI BOT - levelga qarab qaror qabul qiladi
+    function getBotBestCard() {
+        const diff = getBotDifficulty();
+        let playableCards = [];
+        let stackCards = [];
+        let normalCards = [];
+        
+        for (let i=0; i<bot.cards.length; i++) {
+            let card = bot.cards[i];
+            if (canPlayCard(card, openCard, drawStack)) {
+                if (isStackCard(card)) {
+                    stackCards.push({ idx: i, card });
+                } else {
+                    normalCards.push({ idx: i, card });
+                }
+                playableCards.push({ idx: i, card });
+            }
+        }
+        
+        if (playableCards.length === 0) return null;
+        
+        // Yuqori levelda stack kartalarini afzal ko'radi
+        if (stackCards.length > 0) {
+            // Level baland bo'lsa, stackni davom ettirishni afzal ko'radi
+            if (Math.random() * 100 < diff.stackPriority) {
+                // Eng katta stack kartasini tanlaydi (+4 > +2)
+                let bestStack = stackCards.sort((a,b) => {
+                    let aVal = a.card.value === "wild+4" ? 4 : (a.card.value === "+2" ? 2 : 0);
+                    let bVal = b.card.value === "wild+4" ? 4 : (b.card.value === "+2" ? 2 : 0);
+                    return bVal - aVal;
+                })[0];
+                return bestStack.idx;
+            }
+        }
+        
+        // Oddiy kartalardan eng yaxshisini tanlash
+        if (normalCards.length > 0) {
+            // Level baland bo'lsa, sizga qarshi rangni tanlashga harakat qiladi
+            if (diff.strategicActions && normalCards.length > 1) {
+                // Sizning qo'lingizdagi ranglar statistikasi (taxminiy)
+                let playerColors = player.cards.map(c => c.color).filter(c => c !== "wild");
+                let mostCommonColor = getMostCommonColor(playerColors);
+                // Bot sizning ko'p rangli kartangizga qarshi rangni afzal ko'radi
+                let badCards = normalCards.filter(c => c.card.color === mostCommonColor);
+                if (badCards.length > 0) {
+                    return badCards[0].idx;
+                }
+            }
+            return normalCards[0].idx;
+        }
+        
+        return playableCards[0].idx;
+    }
+    
+    function getMostCommonColor(colors) {
+        if (colors.length === 0) return COLORS[Math.floor(Math.random()*COLORS.length)];
+        let count = { red:0, green:0, blue:0, yellow:0 };
+        for (let c of colors) if (c) count[c]++;
+        let maxColor = COLORS[0];
+        for (let col of COLORS) {
+            if (count[col] > count[maxColor]) maxColor = col;
+        }
+        return maxColor;
+    }
+    
+    function showColorPicker(callback) {
+        waitingForWildPick = true;
+        renderUI();
+        
+        const modal = document.createElement("div");
+        modal.className = "color-modal";
+        modal.innerHTML = `
+            <div class="color-modal-content">
+                <h3>🎨 RANG TANLANG 🎨</h3>
+                <div class="color-buttons">
+                    <div class="color-btn color-red" data-color="red"></div>
+                    <div class="color-btn color-green" data-color="green"></div>
+                    <div class="color-btn color-blue" data-color="blue"></div>
+                    <div class="color-btn color-yellow" data-color="yellow"></div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        const btns = modal.querySelectorAll(".color-btn");
+        btns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                const color = btn.getAttribute("data-color");
+                document.body.removeChild(modal);
+                waitingForWildPick = false;
+                callback(color);
+                renderUI();
+                if (currentTurn === "bot" && gameActive) scheduleBotPlay();
+            });
+        });
+    }
+    
+    function playCard(who, cardIdx) {
+        if (!gameActive) return false;
+        if (waitingForWildPick) return false;
+        if (who !== currentTurn) {
+            if (who === "player") document.getElementById("gameMsg").innerHTML = "❌ Hozir bot navbati!";
+            return false;
+        }
+        
+        let hand = (who === "player") ? player.cards : bot.cards;
+        let card = hand[cardIdx];
+        
+        if (!canPlayCard(card, openCard, drawStack)) {
+            if (who === "player") {
+                if (drawStack > 0) document.getElementById("gameMsg").innerHTML = `❗ ${drawStack} ta stack bor. Siz +2/+4 yoki rang/raqam mos keladigan oddiy karta tashlashingiz mumkin!`;
+                else document.getElementById("gameMsg").innerHTML = "❌ Bu karta mos emas!";
+            }
+            return false;
+        }
+        
+        if (card.type === "wild") {
+            if (who === "player") {
+                showColorPicker((chosenColor) => {
+                    completePlay(who, cardIdx, card, hand, chosenColor);
+                });
+                return true;
+            } else {
+                // Bot uchun aqlli rang tanlash
+                let chosenColor;
+                const diff = getBotDifficulty();
+                if (diff.smartWildPick && player.cards.length > 0) {
+                    let playerColors = player.cards.map(c => c.color).filter(c => c !== "wild");
+                    let mostCommon = getMostCommonColor(playerColors);
+                    chosenColor = mostCommon;
+                } else {
+                    chosenColor = COLORS[Math.floor(Math.random()*COLORS.length)];
+                }
+                completePlay(who, cardIdx, card, hand, chosenColor);
+                return true;
+            }
+        } else {
+            completePlay(who, cardIdx, card, hand, null);
+        }
+        return true;
+    }
+    
+    function completePlay(who, cardIdx, card, hand, chosenColor) {
+        hand.splice(cardIdx, 1);
+        
+        let isStackPlay = isStackCard(card);
+        if (isStackPlay) {
+            if (card.value === "+2") drawStack += 2;
+            if (card.value === "wild+4") drawStack += 4;
+            document.getElementById("gameMsg").innerHTML = `🔥 Stack +${card.value === "+2" ? "2" : "4"}! Jami stack: ${drawStack}`;
+        } else {
+            document.getElementById("gameMsg").innerHTML = `🎴 Karta tashlandi. Stack: ${drawStack}`;
+        }
+        
+        openCard = { ...card };
+        
+        if (card.type === "wild" && chosenColor) {
+            openCard.color = chosenColor;
+            document.getElementById("gameMsg").innerHTML = `🎨 Rang tanlandi: ${chosenColor}`;
+        }
+        
+        if (drawStack === 0) {
+            if (card.value === "skip") skipNext = true;
+            if (card.value === "reverse") skipNext = true;
+        }
+        
+        // G'alaba tekshiruvi
+        if (hand.length === 0) {
+            gameActive = false;
+            let winner = (who === "player") ? "SIZ" : "BOT";
+            document.getElementById("gameMsg").innerHTML = `🏆🏆🏆 ${winner} YUTDI! 🏆🏆🏆`;
+            renderUI();
+            if (who === "player") {
+                showFireAndBurn();
+                // Level oshirish
+                winCount++;
+                if (winCount >= 3) {
+                    levelUp();
+                    winCount = 0;
+                    updateLevelUI();
+                }
+                updateLevelUI();
+                setTimeout(() => startNewGame(), 3000);
+            } else {
+                // Yutqazsa level pasaymaydi, faqat o'yin qayta boshlanadi
+                setTimeout(() => startNewGame(), 2000);
+            }
+            return;
+        }
+        
+        if (drawStack > 0) {
+            currentTurn = (currentTurn === "player") ? "bot" : "player";
+            renderUI();
+            if (gameActive && currentTurn === "bot") scheduleBotPlay();
+            return;
+        }
+        
+        if (skipNext) {
+            skipNext = false;
+            currentTurn = (currentTurn === "player") ? "bot" : "player";
+        } else {
+            currentTurn = (currentTurn === "player") ? "bot" : "player";
+        }
+        
+        renderUI();
+        
+        if (gameActive && currentTurn === "bot") {
+            scheduleBotPlay();
+        }
+    }
+    
+    function takePenalty(who) {
+        if (drawStack === 0) return false;
+        let hand = (who === "player") ? player.cards : bot.cards;
+        let penalty = drawStack;
+        for (let i=0; i<penalty; i++) {
+            if (gameDeck.length === 0) gameDeck = createDeck();
+            hand.push(gameDeck.pop());
+        }
+        document.getElementById("gameMsg").innerHTML = `${who === "player" ? "Siz" : "Bot"} ${penalty} ta karta oldingiz! (zanjir tozalandi)`;
+        drawStack = 0;
+        
+        currentTurn = (who === "player") ? "bot" : "player";
+        renderUI();
+        
+        if (gameActive && currentTurn === "bot") scheduleBotPlay();
+        return true;
+    }
+    
+    function scheduleBotPlay() {
+        if (botTimeout) clearTimeout(botTimeout);
+        const diff = getBotDifficulty();
+        botTimeout = setTimeout(() => {
+            if (gameActive && currentTurn === "bot" && !waitingForWildPick) {
+                botPlay();
+            }
+        }, diff.responseTime);
+    }
+    
+    function botPlay() {
+        if (!gameActive || currentTurn !== "bot" || waitingForWildPick) return;
+        
+        const bestCardIdx = getBotBestCard();
+        
+        if (bestCardIdx !== null) {
+            playCard("bot", bestCardIdx);
+            return;
+        }
+        
+        if (drawStack > 0) {
+            takePenalty("bot");
+            return;
+        }
+        
+        if (gameDeck.length === 0) gameDeck = createDeck();
+        let newCard = gameDeck.pop();
+        bot.cards.push(newCard);
+        document.getElementById("gameMsg").innerHTML = "🤖 Bot 1 ta karta oldi!";
+        
+        if (canPlayCard(newCard, openCard, drawStack)) {
+            let idx = bot.cards.length - 1;
+            playCard("bot", idx);
+        } else {
+            currentTurn = "player";
+            renderUI();
+            document.getElementById("gameMsg").innerHTML += " Sizning navbatingiz!";
+        }
+    }
+    
+    function playerDraw() {
+        if (!gameActive) return;
+        if (waitingForWildPick) return;
+        if (currentTurn !== "player") {
+            document.getElementById("gameMsg").innerHTML = "❌ Hozir bot navbati!";
+            return;
+        }
+        
+        if (drawStack > 0) {
+            takePenalty("player");
+            return;
+        }
+        
+        if (gameDeck.length === 0) gameDeck = createDeck();
+        let newCard = gameDeck.pop();
+        player.cards.push(newCard);
+        
+        if (canPlayCard(newCard, openCard, drawStack)) {
+            let idx = player.cards.length - 1;
+            playCard("player", idx);
+        } else {
+            document.getElementById("gameMsg").innerHTML = "📥 Siz 1 ta karta oldingiz! Navbat botga o'tdi.";
+            currentTurn = "bot";
+            renderUI();
+            if (gameActive && currentTurn === "bot") scheduleBotPlay();
+        }
+    }
+    
+    function showFireAndBurn() {
+        let fireDiv = document.createElement("div");
+        fireDiv.className = "fire-overlay";
+        document.body.appendChild(fireDiv);
+        setTimeout(() => fireDiv.remove(), 1000);
+        
+        let botDiv = document.getElementById("bot-card-area");
+        if (botDiv) {
+            let allCards = botDiv.querySelectorAll(".card");
+            allCards.forEach(cardEl => {
+                cardEl.classList.add("burn-card");
+            });
+        }
+    }
+    
+    function renderUI() {
+        const container = document.getElementById("playersRow");
+        container.innerHTML = "";
+        
+        let playerDiv = document.createElement("div");
+        playerDiv.className = "player-card";
+        if (currentTurn === "player" && gameActive && !waitingForWildPick) playerDiv.classList.add("active");
+        playerDiv.innerHTML = `
+            <div class="player-name">${player.name}</div>
+            <div class="card-area" id="player-card-area"></div>
+            <div>📦 ${player.cards.length} ta karta</div>
+        `;
+        container.appendChild(playerDiv);
+        
+        let botDiv = document.createElement("div");
+        botDiv.className = "player-card";
+        if (currentTurn === "bot" && gameActive && !waitingForWildPick) botDiv.classList.add("active");
+        botDiv.innerHTML = `
+            <div class="player-name">${bot.name} <span style="font-size:0.8rem;">(Lvl${currentLevel})</span></div>
+            <div class="card-area" id="bot-card-area"></div>
+            <div>📦 ${bot.cards.length} ta karta</div>
+        `;
+        container.appendChild(botDiv);
+        
+        const playerArea = document.getElementById("player-card-area");
+        playerArea.innerHTML = "";
+        for (let ci=0; ci<player.cards.length; ci++) {
+            let card = player.cards[ci];
+            let cardDiv = document.createElement("div");
+            cardDiv.className = `card ${card.color === "wild" ? "wild" : card.color}`;
+            let display = card.value === "wild" ? "🃏" : (card.value === "wild+4" ? "+4🃏" : (card.value === "+2" ? "+2" : (card.value === "skip" ? "⛔" : (card.value === "reverse" ? "🔄" : card.value))));
+            cardDiv.innerText = display;
+            if (gameActive && currentTurn === "player" && !waitingForWildPick) {
+                cardDiv.style.cursor = "pointer";
+                cardDiv.onclick = (function(idx) { return function() { playCard("player", idx); }; })(ci);
+            }
+            playerArea.appendChild(cardDiv);
+        }
+        
+        const botArea = document.getElementById("bot-card-area");
+        botArea.innerHTML = "";
+        for (let i=0; i<bot.cards.length; i++) {
+            let hiddenDiv = document.createElement("div");
+            hiddenDiv.className = "card hidden-card";
+            hiddenDiv.innerText = "?";
+            hiddenDiv.style.cursor = "default";
+            botArea.appendChild(hiddenDiv);
+        }
+        
+        const openSlot = document.getElementById("openCardSlot");
+        openSlot.innerHTML = "";
+        if (openCard) {
+            let ocDiv = document.createElement("div");
+            ocDiv.className = `card ${openCard.color === "wild" ? "wild" : openCard.color}`;
+            let display = openCard.value === "wild" ? "🃏" : (openCard.value === "wild+4" ? "+4🃏" : (openCard.value === "+2" ? "+2" : (openCard.value === "skip" ? "⛔" : (openCard.value === "reverse" ? "🔄" : openCard.value))));
+            ocDiv.innerText = display;
+            openSlot.appendChild(ocDiv);
+        }
+        
+        document.getElementById("stackInfo").innerHTML = drawStack > 0 ? `<span class="stack-badge">🔥 STACK: +${drawStack} 🔥</span>` : "";
+        if (!gameActive) document.getElementById("drawBtn").disabled = true;
+        else document.getElementById("drawBtn").disabled = false;
+        if (waitingForWildPick) document.getElementById("drawBtn").disabled = true;
+    }
+    
+    document.getElementById("drawBtn").onclick = playerDraw;
+    document.getElementById("resetBtn").onclick = () => { resetLevel(); };
+    
+    updateLevelUI();
+    startNewGame();
+</script>
+</body>
+</html>
